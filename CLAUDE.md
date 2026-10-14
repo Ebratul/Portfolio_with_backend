@@ -191,6 +191,27 @@ pnpm -r typecheck | pnpm -r lint | pnpm --filter @portfolio/api test
 - Environment note: the dev machine rebooted mid-session; exit code 137 during E2E was memory pressure (dev servers + Chrome), not a bug.
   Never use `pkill -f <pattern>` from the tool shell (it kills the shell itself).
 
+## Production deployment (live as of 2026-10-14)
+
+- Web: Vercel project `portfolio-cms` (team ebratuls-projects), Root Directory `apps/web`, URL https://portfolio-cms-ashy.vercel.app.
+  Deploy from the repo root with `vercel --prod` (never from `apps/web`, the CLI would not upload `packages/shared`). Env (production):
+  `API_INTERNAL_URL`, `NEXT_PUBLIC_SITE_URL`, `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `REVALIDATE_SECRET`. `.vercel/` is gitignored.
+  `vercel link` writes `.env.local` (an OIDC token) and appends `.env*` to `.gitignore` — delete the file and revert that line
+  (`.env*` would ignore the `.env.example` files).
+- API: Render web service `portfolio-api` (id `srv-db7npc49v7es73cn4esg`, free plan, oregon), https://portfolio-api-59yk.onrender.com.
+  Database: Prisma Postgres via a `postgres://…@pooled.db.prisma.io:5432/postgres?sslmode=require` URL (a `prisma+postgres://` URL does NOT work
+  with this API). Auto-deploy on push to `main`. Render env must satisfy: `WEB_ORIGIN` == the Vercel origin exactly (it was wrongly
+  `http://localhost:3000` once -> every browser request got 403 "Origin not allowed"), `REVALIDATE_SECRET` identical to Vercel's,
+  `TRUST_PROXY_HOPS=2`. Render's API (`https://api.render.com/v1/services/<id>/env-vars/<KEY>` PUT, `/deploys` POST, `/resume` POST)
+  was used to set env and deploy; a service suspended by the user must be resumed before it can deploy.
+- Verified live: site/projects/admin-login/robots/sitemap return 200; anonymous /admin redirects to login; login and contact work through
+  the Vercel rewrite; revalidate endpoint accepts the shared secret and rejects others; Origin guard blocks foreign origins.
+- NOT verified on production: successful admin login + editing (password is only known to the owner), image upload to real Cloudinary,
+  stored client IP of a contact message (confirms `TRUST_PROXY_HOPS`), SMTP delivery, GitHub graph (no `GITHUB_TOKEN`).
+- Owner to-do: rotate secrets that appeared in chat (Render API key, Prisma DB password, REVALIDATE_SECRET), change the admin password
+  in /admin/account, remove `ADMIN_PASSWORD` from Render, set SEO title in Site settings (still the seed default), `vercel git connect`
+  for auto-deploys.
+
 ## Gotchas learned
 
 - Never run `next build` while `next start` is serving the same `.next` (stale chunks -> console errors in Lighthouse).

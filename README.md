@@ -6,6 +6,16 @@ A fully dynamic, CMS-driven developer portfolio.
 - **Admin dashboard** at `/admin` — manage *everything* (profile, photo, projects and galleries, skills, experience/education/certificates, socials, section order and visibility, theme colours, fonts, SEO, resume, messages) **without touching code**.
 - Changes appear on the public site within seconds: the API tells the site to revalidate its cache after every edit — no redeploy.
 
+## Live
+
+| | URL |
+|---|---|
+| **Website** | https://portfolio-cms-ashy.vercel.app |
+| **Admin dashboard** | https://portfolio-cms-ashy.vercel.app/admin/login |
+| **API** (health check) | https://portfolio-api-59yk.onrender.com/api/v1/health |
+
+The site runs on Vercel, the API on Render (free plan: it sleeps when idle, so the first admin action after a quiet period can take 30–60 seconds) and the data in Prisma Postgres.
+
 ```
 pnpm install  →  pnpm db:migrate  →  pnpm db:seed  →  pnpm dev
 ```
