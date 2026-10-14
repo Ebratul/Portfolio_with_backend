@@ -295,7 +295,7 @@ Recommended stack: **Neon** (database) · **Cloudinary** (files) · **Render** o
 
 1. Push this repository to GitHub.
 2. Render → **New → Blueprint** → select the repo. It reads [`render.yaml`](render.yaml). If this folder is not the repo root, set `rootDir` in that file.
-3. Fill the prompted values: `DATABASE_URL`, `WEB_ORIGIN` (your final site URL, e.g. `https://yourname.dev`), `REVALIDATE_SECRET` (any random string — remember it), `ADMIN_EMAIL`, `ADMIN_PASSWORD`, the three Cloudinary values, and optionally `GITHUB_TOKEN` and SMTP settings. JWT secrets are generated for you; `TRUST_PROXY_HOPS=2` is preset.
+3. Fill the prompted values: `DATABASE_URL`, `WEB_ORIGIN` (your final site URL, e.g. `https://yourname.dev`), `REVALIDATE_SECRET` (any random string — remember it), `ADMIN_EMAIL`, `ADMIN_PASSWORD` and the three Cloudinary values. (Render requires a value for every prompted key, so `GITHUB_TOKEN` and the `SMTP_*` settings are not prompted; add them later under *Environment* if you want them.) JWT secrets are generated for you; `TRUST_PROXY_HOPS=2` is preset.
 4. The build command applies migrations (`prisma migrate deploy`). Health check: `/api/v1/health`.
 5. Copy the service URL, e.g. `https://portfolio-api.onrender.com`.
 
