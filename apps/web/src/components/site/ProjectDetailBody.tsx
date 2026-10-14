@@ -87,7 +87,7 @@ export function ProjectDetailBody({ project, headingLevel = 3 }: { project: Proj
           </Heading>
           <ul className="flex flex-wrap gap-2">
             {project.techStack.map((t) => (
-              <li key={t} className="rounded-full border border-line bg-bg px-3 py-1 text-sm font-medium">
+              <li key={t} className="max-w-full rounded-2xl border border-line bg-bg px-3 py-1 text-sm font-medium [overflow-wrap:anywhere]">
                 {t}
               </li>
             ))}

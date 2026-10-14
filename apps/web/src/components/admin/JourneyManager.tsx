@@ -171,12 +171,12 @@ function ItemDialog({ open, onOpenChange, item, type }: { open: boolean; onOpenC
         <Field label="Description" htmlFor="j-desc" error={errors.description?.message} required>
           <Textarea id="j-desc" rows={4} aria-invalid={!!errors.description} {...register("description")} />
         </Field>
-        <Field label="Tags" htmlFor="j-tags" hint="Technologies or topics. Press Enter after each.">
+        <Field label="Tags" htmlFor="j-tags" hint="Short labels such as technologies or topics. Press Enter after each. Links do not go here.">
           <Controller control={control} name="tags" render={({ field }) => <TagInput id="j-tags" value={field.value} onChange={field.onChange} />} />
         </Field>
         {effectiveType === "CERTIFICATE" ? (
           <>
-            <Field label="Credential URL" htmlFor="j-cred" error={errors.credentialUrl?.message}>
+            <Field label="Credential URL" htmlFor="j-cred" error={errors.credentialUrl?.message} hint="The certificate link (e.g. Coursera). It becomes the “View Credential” button.">
               <Input id="j-cred" type="url" placeholder="https://…" aria-invalid={!!errors.credentialUrl} {...register("credentialUrl")} />
             </Field>
             <ImageUploader

@@ -86,7 +86,7 @@ export function Journey({ section, timeline }: { section: SectionConfig; timelin
                     <Reveal
                       y={20}
                       className={cn(
-                        "card p-6 transition hover:border-primary/60 hover:shadow-[0_8px_30px_var(--glow)]",
+                        "card min-w-0 p-6 transition hover:border-primary/60 hover:shadow-[0_8px_30px_var(--glow)]",
                         left ? "md:col-start-1 md:text-right" : "md:col-start-2",
                       )}
                     >
@@ -118,7 +118,7 @@ export function Journey({ section, timeline }: { section: SectionConfig; timelin
                       {item.tags.length > 0 ? (
                         <ul className={cn("mt-4 flex flex-wrap gap-2", left && "md:justify-end")}>
                           {item.tags.map((t) => (
-                            <li key={t} className="rounded-full bg-primary/10 px-3 py-1 text-xs font-medium text-ink">
+                            <li key={t} className="max-w-full rounded-2xl bg-primary/10 px-3 py-1 text-xs font-medium text-ink [overflow-wrap:anywhere]">
                               {t}
                             </li>
                           ))}
@@ -129,7 +129,7 @@ export function Journey({ section, timeline }: { section: SectionConfig; timelin
                           href={item.credentialUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-ink hover:underline"
+                          className="mt-4 inline-flex max-w-full items-center gap-1.5 text-sm font-semibold text-ink hover:underline"
                         >
                           View Credential
                           <ExternalLink className="size-3.5" aria-hidden="true" />
