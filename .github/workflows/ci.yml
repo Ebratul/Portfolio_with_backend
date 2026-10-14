@@ -1,0 +1,77 @@
+# If this folder is NOT the git repository root, move .github/ to the root and add
+# `defaults: run: working-directory: <folder>` to each job.
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DATABASE_URL: postgresql://portfolio:portfolio@localhost:5432/portfolio?schema=public
+  JWT_ACCESS_SECRET: ci_access_secret_at_least_32_characters_long_000
+  JWT_REFRESH_SECRET: ci_refresh_secret_at_least_32_characters_long_00
+  CLOUDINARY_CLOUD_NAME: ci
+  CLOUDINARY_API_KEY: ci
+  CLOUDINARY_API_SECRET: ci
+  ADMIN_EMAIL: admin@example.com
+  ADMIN_PASSWORD: ChangeMe-12345
+  WEB_ORIGIN: http://localhost:3000
+  REVALIDATE_SECRET: ci_revalidate_secret
+  NEXT_PUBLIC_SITE_URL: http://localhost:3000
+  NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: ci
+  API_INTERNAL_URL: http://localhost:4000
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @portfolio/api db:generate
+      - run: pnpm typecheck
+      - run: pnpm lint
+      - run: pnpm --filter @portfolio/api test
+      - run: pnpm build
+
+  e2e:
+    needs: check
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env: { POSTGRES_USER: portfolio, POSTGRES_PASSWORD: portfolio, POSTGRES_DB: portfolio }
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U portfolio" --health-interval 5s --health-timeout 3s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @portfolio/api db:deploy
+      - run: pnpm db:seed
+      - run: pnpm build
+      - name: Start API and web
+        run: |
+          (pnpm --filter @portfolio/api start > api.log 2>&1 &)
+          (pnpm --filter @portfolio/web start > web.log 2>&1 &)
+          for i in $(seq 1 60); do
+            curl -sf localhost:4000/api/v1/health >/dev/null && curl -sf localhost:3000/ >/dev/null && exit 0
+            sleep 1
+          done
+          echo "servers did not start"; cat api.log web.log; exit 1
+      - run: pnpm test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-traces
+          path: apps/web/test-results

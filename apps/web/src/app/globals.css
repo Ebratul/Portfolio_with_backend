@@ -1,0 +1,271 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/*
+ * Design tokens. Brand colours (--primary, --accent, --bg, --surface) are injected from
+ * SiteSettings by the root layout; everything below only defines the fixed, derived tokens.
+ */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+  --color-ink: var(--ink);
+  --color-on-primary: var(--on-primary);
+  --color-heat-0: var(--heat-0);
+  --color-heat-1: var(--heat-1);
+  --color-heat-2: var(--heat-2);
+  --color-heat-3: var(--heat-3);
+  --color-heat-4: var(--heat-4);
+  --font-heading: var(--font-heading-stack);
+  --font-sans: var(--font-body-stack);
+  --radius-card: 1rem;
+}
+
+:root {
+  --font-heading-stack: var(--f-outfit), system-ui, sans-serif;
+  --font-body-stack: var(--f-inter), system-ui, sans-serif;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --fg: #e8eaf0;
+  --muted: #9ca3b4;
+  --line: rgba(255, 255, 255, 0.07);
+  --ink: var(--primary);
+  --glow: color-mix(in srgb, var(--primary) 28%, transparent);
+  --heat-0: rgba(255, 255, 255, 0.06);
+  --heat-1: #0e4429;
+  --heat-2: #006d32;
+  --heat-3: #26a641;
+  --heat-4: #39d353;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --bg: #f8fafc;
+  --surface: #ffffff;
+  --fg: #0f172a;
+  --muted: #475569;
+  --line: rgba(15, 23, 42, 0.1);
+  /* Darkened brand colour for text on light backgrounds so it keeps AA contrast. */
+  --ink: color-mix(in srgb, var(--primary) 62%, #000);
+  --glow: color-mix(in srgb, var(--primary) 22%, transparent);
+  --heat-0: #e5e7eb;
+  --heat-1: #9be9a8;
+  --heat-2: #40c463;
+  --heat-3: #30a14e;
+  --heat-4: #216e39;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+/* Scale the whole rem-based layout up on big monitors so it does not look lost on 2K/4K screens. */
+@media (min-width: 1920px) {
+  html {
+    font-size: 112.5%;
+  }
+}
+@media (min-width: 2560px) {
+  html {
+    font-size: 137.5%;
+  }
+}
+@media (min-width: 3200px) {
+  html {
+    font-size: 162.5%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body-stack);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading-stack);
+  letter-spacing: -0.02em;
+}
+
+section[id] {
+  scroll-margin-top: 6rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 0.375rem;
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(90deg, var(--primary), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@utility bg-brand-gradient {
+  background-image: linear-gradient(90deg, var(--primary), var(--accent));
+}
+
+@utility glass {
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--line);
+}
+
+@utility card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 1rem;
+}
+
+@utility prose-content {
+  line-height: 1.75;
+  color: var(--muted);
+  & p {
+    margin-bottom: 1rem;
+  }
+  & h2,
+  & h3,
+  & h4 {
+    color: var(--fg);
+    margin: 1.5rem 0 0.5rem;
+    font-weight: 700;
+  }
+  & ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  & ol {
+    list-style: decimal;
+    padding-left: 1.25rem;
+    margin-bottom: 1rem;
+  }
+  & a {
+    color: var(--ink);
+    text-decoration: underline;
+  }
+  & code {
+    background: var(--line);
+    padding: 0.1rem 0.35rem;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+  }
+  & pre {
+    background: var(--line);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+  }
+  & img {
+    border-radius: 0.75rem;
+    margin: 1rem 0;
+  }
+  & blockquote {
+    border-left: 3px solid var(--primary);
+    padding-left: 1rem;
+    margin-bottom: 1rem;
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+/*
+ * Scroll-driven reveal. `backwards` fill only styles the element BEFORE its entry range, so once
+ * revealed it returns to its natural style (hover transforms keep working). Unsupported browsers and
+ * prefers-reduced-motion users get no animation and full visibility.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal {
+      animation: reveal-in linear backwards;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+@keyframes rise {
+  from {
+    transform: translateY(14px);
+  }
+  to {
+    transform: none;
+  }
+}
+/* Translate-only on purpose: animating opacity would delay the Largest Contentful Paint. */
+@utility animate-rise {
+  animation: rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@utility animate-float-slow {
+  animation: float-slow 5s ease-in-out infinite;
+}
+@utility animate-blink {
+  animation: blink 1s step-end infinite;
+}
+@utility animate-spin-slow {
+  animation: spin-slow 8s linear infinite;
+}
+@utility skeleton {
+  background: linear-gradient(90deg, var(--line) 25%, color-mix(in srgb, var(--fg) 12%, transparent) 50%, var(--line) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+  border-radius: 0.75rem;
+}

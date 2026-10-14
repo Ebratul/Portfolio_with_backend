@@ -1,0 +1,220 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  url      = env("DATABASE_URL")
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+}
+
+enum SkillCategory {
+  LANGUAGES
+  FRONTEND
+  BACKEND
+  DATABASE
+  TOOLS
+}
+
+enum SkillLevel {
+  LEARNING
+  INTERMEDIATE
+  PRO
+}
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum TimelineType {
+  EXPERIENCE
+  EDUCATION
+  CERTIFICATE
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(ADMIN)
+  /// SHA-256 hash of the current refresh token (never the raw token)
+  refreshToken String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+/// Singleton: the fixed id guarantees a single row.
+model Profile {
+  id                 String   @id @default("singleton")
+  fullName           String
+  brandName          String
+  brandSuffix        String   @default(".dev")
+  badgeText          String
+  roles              String[]
+  tagline            String
+  shortBio           String
+  aboutHeading       String
+  aboutHighlights    String[]
+  aboutParagraphs    String[]
+  avatarUrl          String?
+  avatarPublicId     String?
+  aboutImageUrl      String?
+  aboutImagePublicId String?
+  experienceYears    Float
+  isAvailable        Boolean  @default(true)
+  availabilityText   String   @default("Available")
+  resumeUrl          String?
+  resumePublicId     String?
+  location           String
+  email              String
+  phone              String?
+  whatsapp           String?
+  githubUsername     String?
+  updatedAt          DateTime @updatedAt
+}
+
+model ValueCard {
+  id          String  @id @default(cuid())
+  title       String
+  icon        String
+  description String?
+  order       Int     @default(0)
+
+  @@index([order])
+}
+
+model SocialLink {
+  id        String  @id @default(cuid())
+  platform  String
+  url       String
+  icon      String
+  order     Int     @default(0)
+  isVisible Boolean @default(true)
+
+  @@index([order])
+}
+
+model Skill {
+  id         String        @id @default(cuid())
+  name       String
+  category   SkillCategory
+  level      SkillLevel
+  percentage Int
+  icon       String
+  iconColor  String?
+  order      Int           @default(0)
+  isVisible  Boolean       @default(true)
+
+  @@index([category, order])
+  @@index([order])
+}
+
+model Project {
+  id              String         @id @default(cuid())
+  slug            String         @unique
+  title           String
+  subtitle        String
+  summary         String
+  description     String
+  features        String[]
+  architecture    String?
+  techStack       String[]
+  role            String?
+  coverUrl        String
+  coverPublicId   String
+  images          ProjectImage[]
+  liveUrl         String?
+  githubUrl       String?
+  githubServerUrl String?
+  isFeatured      Boolean        @default(false)
+  status          ProjectStatus  @default(DRAFT)
+  order           Int            @default(0)
+  startDate       DateTime?
+  endDate         DateTime?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([status, order])
+  @@index([isFeatured])
+  @@index([order])
+}
+
+model ProjectImage {
+  id        String  @id @default(cuid())
+  url       String
+  publicId  String
+  alt       String?
+  order     Int     @default(0)
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+
+  @@index([projectId, order])
+}
+
+model TimelineItem {
+  id            String       @id @default(cuid())
+  type          TimelineType
+  title         String
+  organization  String
+  location      String?
+  startDate     DateTime
+  endDate       DateTime?
+  description   String
+  tags          String[]
+  credentialUrl String?
+  imageUrl      String?
+  imagePublicId String?
+  order         Int          @default(0)
+  isVisible     Boolean      @default(true)
+
+  @@index([type, order])
+  @@index([order])
+}
+
+model SectionConfig {
+  id        String  @id @default(cuid())
+  key       String  @unique
+  title     String
+  subtitle  String?
+  isVisible Boolean @default(true)
+  order     Int
+
+  @@index([order])
+}
+
+/// Singleton: the fixed id guarantees a single row.
+model SiteSettings {
+  id              String   @id @default("singleton")
+  primaryColor    String   @default("#FF4D6D")
+  accentColor     String   @default("#E94584")
+  bgColor         String   @default("#0A0E1A")
+  surfaceColor    String   @default("#111827")
+  defaultTheme    String   @default("dark")
+  fontHeading     String   @default("Outfit")
+  fontBody        String   @default("Inter")
+  seoTitle        String
+  seoDescription  String
+  seoKeywords     String[]
+  ogImageUrl      String?
+  ogImagePublicId String?
+  faviconUrl      String?
+  footerText      String
+  updatedAt       DateTime @updatedAt
+}
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  isRead    Boolean  @default(false)
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([isRead, createdAt])
+}

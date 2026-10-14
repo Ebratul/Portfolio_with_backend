@@ -1,0 +1,31 @@
+{
+  "name": "portfolio",
+  "private": true,
+  "packageManager": "pnpm@11.24.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel --filter @portfolio/api --filter @portfolio/web dev",
+    "build": "pnpm -r build",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "format": "prettier --write .",
+    "db:migrate": "pnpm --filter @portfolio/api db:migrate",
+    "db:seed": "pnpm --filter @portfolio/api db:seed",
+    "db:studio": "pnpm --filter @portfolio/api db:studio",
+    "test:e2e": "pnpm --filter @portfolio/web test:e2e",
+    "start": "pnpm -r --parallel --filter @portfolio/api --filter @portfolio/web start",
+    "db:generate": "pnpm --filter @portfolio/api db:generate",
+    "db:deploy": "pnpm --filter @portfolio/api db:deploy"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.6.5",
+    "eslint": "^10.12.0",
+    "prettier": "^3.9.10",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.71.2"
+  }
+}
