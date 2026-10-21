@@ -21,4 +21,5 @@ WORKDIR /app/apps/api
 EXPOSE 4000
 # Apply pending migrations, then start. Migrations are idempotent and safe to run on every boot.
 # (Calls the binaries directly so startup needs no package-manager download.)
-CMD ["sh", "-c", "./node_modules/.bin/prisma migrate deploy && node dist/server.js"]
+# PRISMA_SCHEMA_DISABLE_ADVISORY_LOCK avoids P1002 timeouts on pooled databases (e.g. Prisma Postgres).
+CMD ["sh", "-c", "PRISMA_SCHEMA_DISABLE_ADVISORY_LOCK=1 ./node_modules/.bin/prisma migrate deploy && node dist/server.js"]

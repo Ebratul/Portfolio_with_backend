@@ -381,6 +381,7 @@ docker run -p 4000:4000 --env-file apps/api/.env portfolio-api   # runs migratio
 | “Too many login attempts” | 5 failed logins in 15 min. Wait, or restart the API (the limiter is in memory). |
 | Edits in admin don’t appear on the site | `REVALIDATE_SECRET` differs between apps, or `WEB_ORIGIN` is wrong. The API logs `Revalidation rejected`. |
 | Contact messages arrive in **Messages** but no email | Render's free plan blocks SMTP. Set `RESEND_API_KEY` instead (see the env table). Check the API logs for `Failed to send contact notification`. |
+| Render build fails with `P1002 … advisory lock` at `prisma migrate deploy` | Pooled databases (Prisma Postgres, PgBouncer) cannot take Prisma's migration lock. Add the environment variable `PRISMA_SCHEMA_DISABLE_ADVISORY_LOCK=1` to the service (it is preset in `render.yaml`). |
 | Image upload fails with 502 | Cloudinary credentials are the demo values. Set real ones. |
 | Contact messages all show the same IP | `TRUST_PROXY_HOPS` too low for your proxy chain. |
 | `pnpm install` warns about ignored build scripts | Allowed builds are listed in `pnpm-workspace.yaml`; run `pnpm approve-builds` if you add native packages. |

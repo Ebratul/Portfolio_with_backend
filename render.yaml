@@ -15,6 +15,10 @@ services:
       - key: NODE_VERSION
         value: "22"
       # Vercel rewrite -> Render = 2 proxies in front of the API (needed for correct client IPs / rate limits).
+      # Prisma Postgres (pooled) cannot take the advisory lock `prisma migrate deploy` asks for (error P1002,
+      # build fails). Only one deploy runs at a time here, so the lock is not needed.
+      - key: PRISMA_SCHEMA_DISABLE_ADVISORY_LOCK
+        value: "1"
       - key: TRUST_PROXY_HOPS
         value: "2"
       - key: DATABASE_URL        # Neon: use the DIRECT (non-pooled) connection string
