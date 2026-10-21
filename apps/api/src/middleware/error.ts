@@ -22,7 +22,12 @@ function toApiError(err: unknown): ApiError {
   }
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     if (err.code === "P2025") return ApiError.notFound();
-    if (err.code === "P2002") return ApiError.conflict("A record with this value already exists");
+    if (err.code === "P2002") {
+      // meta.target lists the unique column(s), e.g. ["slug"]; naming them tells the user what to change.
+      const target = err.meta?.target;
+      const fields = Array.isArray(target) ? target.map(String).join(", ") : typeof target === "string" ? target : "";
+      return ApiError.conflict(fields ? `A record with this ${fields} already exists` : "A record with this value already exists");
+    }
   }
   if (err instanceof SyntaxError && "body" in err) return ApiError.validation("Malformed JSON body");
   return new ApiError(500, "INTERNAL", "Something went wrong");

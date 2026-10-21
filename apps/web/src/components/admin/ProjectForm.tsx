@@ -108,7 +108,12 @@ export function ProjectForm({ project }: { project: Project | null }) {
     onError: (err) => {
       if (err instanceof AdminApiError) {
         for (const [f, m] of Object.entries(err.fieldErrors)) if (m?.[0]) setError(f as keyof FormIn, { message: m[0] });
-        if (err.code === "CONFLICT") setError("slug", { message: "This slug is already used by another project" });
+        if (err.code === "CONFLICT") {
+          setError("slug", { message: "This slug is already used by another project. It may exist as a draft: check the Projects list, or choose a different slug." });
+          document.getElementById("p-slug")?.focus();
+          toast.error("This slug is already used by another project (maybe a draft). Change the Slug field or edit the existing project.");
+          return;
+        }
       }
       toast.error(errorMessage(err));
     },
