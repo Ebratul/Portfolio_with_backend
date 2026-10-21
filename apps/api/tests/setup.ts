@@ -13,6 +13,7 @@ Object.assign(process.env, {
   ADMIN_PASSWORD: "TestPassword-123",
   WEB_ORIGIN: "http://localhost:3000",
   REVALIDATE_SECRET: "test_revalidate_secret",
+  RESEND_API_KEY: "re_test_key",
 });
 
 vi.mock("../src/lib/prisma", () => {

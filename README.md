@@ -214,7 +214,8 @@ Sign in with `ADMIN_EMAIL` / `ADMIN_PASSWORD`, then **Account → change your pa
 | `ADMIN_EMAIL` | ✅ | Admin login; also the fallback recipient of contact-form emails |
 | `ADMIN_PASSWORD` | seed only | Read only by `pnpm db:seed`. Remove it from the server after the first seed |
 | `GITHUB_TOKEN` | optional | Enables the contribution graph (a classic token with `read:user` is enough). Never sent to the browser |
-| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | optional | Emails you when someone uses the contact form. Without them messages are still stored |
+| `RESEND_API_KEY`, `MAIL_FROM` | optional | Emails you via the [Resend](https://resend.com) HTTPS API when someone uses the contact form. **Use this on Render**: its free plan blocks outbound SMTP. Default sender is `onboarding@resend.dev`, which can only email your own Resend account address |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM` | optional | Alternative to Resend (e.g. Gmail app password); used only when `RESEND_API_KEY` is empty. Without either, messages are still stored |
 | `TRUST_PROXY_HOPS` | optional | Proxies in front of the API: `1` locally, `2` for Vercel → Render. Controls real client IPs (rate limits, stored message IPs) |
 | `PORT`, `NODE_ENV`, `LOG_LEVEL` | optional | defaults `4000`, `development`, `info` |
 
@@ -379,6 +380,7 @@ docker run -p 4000:4000 --env-file apps/api/.env portfolio-api   # runs migratio
 | `/admin` loops back to the login page | `API_INTERNAL_URL` wrong or the API is down; check `…/api/v1/health`. |
 | “Too many login attempts” | 5 failed logins in 15 min. Wait, or restart the API (the limiter is in memory). |
 | Edits in admin don’t appear on the site | `REVALIDATE_SECRET` differs between apps, or `WEB_ORIGIN` is wrong. The API logs `Revalidation rejected`. |
+| Contact messages arrive in **Messages** but no email | Render's free plan blocks SMTP. Set `RESEND_API_KEY` instead (see the env table). Check the API logs for `Failed to send contact notification`. |
 | Image upload fails with 502 | Cloudinary credentials are the demo values. Set real ones. |
 | Contact messages all show the same IP | `TRUST_PROXY_HOPS` too low for your proxy chain. |
 | `pnpm install` warns about ignored build scripts | Allowed builds are listed in `pnpm-workspace.yaml`; run `pnpm approve-builds` if you add native packages. |

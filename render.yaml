@@ -41,4 +41,5 @@ services:
         value: "587"
       # Optional, add later in the Render dashboard (Environment) when you want them:
       #   GITHUB_TOKEN  - enables the GitHub contribution graph
-      #   SMTP_HOST, SMTP_USER, SMTP_PASS, SMTP_FROM - emails you when the contact form is used
+      #   RESEND_API_KEY (+ MAIL_FROM) - emails you when the contact form is used (use this on Render: SMTP is blocked on the free plan)
+      #   or SMTP_HOST, SMTP_USER, SMTP_PASS, SMTP_FROM on hosts that allow SMTP

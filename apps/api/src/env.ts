@@ -19,6 +19,10 @@ const schema = z.object({
   SMTP_USER: z.string().optional(),
   SMTP_PASS: z.string().optional(),
   SMTP_FROM: z.string().optional(),
+  /** HTTPS email API (https://resend.com). Preferred: some hosts (e.g. Render free) block outbound SMTP ports. */
+  RESEND_API_KEY: z.string().optional(),
+  /** Sender for Resend. Defaults to Resend's shared onboarding address (can only email your own Resend account address). */
+  MAIL_FROM: z.string().optional(),
   WEB_ORIGIN: z.string().url(),
   REVALIDATE_SECRET: z.string().min(16),
   /** Reverse proxies in front of the API (Vercel rewrite -> Render = 2). Controls req.ip, and so rate limits. */

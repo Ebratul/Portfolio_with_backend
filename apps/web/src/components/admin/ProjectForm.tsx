@@ -120,9 +120,9 @@ export function ProjectForm({ project }: { project: Project | null }) {
   });
 
   const imgBase = project ? `/admin/projects/${project.id}/images` : "";
-  const addImage = useMutation({ mutationFn: (i: { url: string; publicId: string }) => adminFetch(imgBase, { method: "POST", body: i }), onSuccess: invalidate });
-  const altImage = useMutation({ mutationFn: (v: { id: string; alt: string | null }) => adminFetch(`${imgBase}/${v.id}`, { method: "PATCH", body: { alt: v.alt } }), onSuccess: invalidate, onError: (e) => toast.error(errorMessage(e)) });
-  const delImage = useMutation({ mutationFn: (id: string) => adminFetch(`${imgBase}/${id}`, { method: "DELETE" }), onSuccess: () => { toast.success("Image removed"); invalidate(); }, onError: (e) => toast.error(errorMessage(e)) });
+  const addImage = useMutation({ mutationFn: (i: { url: string; publicId: string }) => adminFetch(imgBase, { method: "POST", body: i }), onSuccess: () => { toast.success("Image added to the gallery (saved)"); invalidate(); } });
+  const altImage = useMutation({ mutationFn: (v: { id: string; alt: string | null }) => adminFetch(`${imgBase}/${v.id}`, { method: "PATCH", body: { alt: v.alt } }), onSuccess: () => { toast.success("Alt text saved"); invalidate(); }, onError: (e) => toast.error(errorMessage(e)) });
+  const delImage = useMutation({ mutationFn: (id: string) => adminFetch(`${imgBase}/${id}`, { method: "DELETE" }), onSuccess: () => { toast.success("Image removed (saved)"); invalidate(); }, onError: (e) => toast.error(errorMessage(e)) });
   const orderImages = useMutation({
     mutationFn: (ids: string[]) => adminFetch(`${imgBase}/reorder`, { method: "PATCH", body: { items: ids.map((id, order) => ({ id, order })) } }),
     onMutate: (ids) => {
@@ -293,7 +293,7 @@ export function ProjectForm({ project }: { project: Project | null }) {
 
         <div className="fixed inset-x-0 bottom-0 z-30 border-t border-line bg-bg/90 px-4 py-3 backdrop-blur lg:pl-64">
           <div className="mx-auto flex max-w-6xl items-center justify-end gap-3 sm:justify-between">
-            <p className="sr-only text-sm text-muted sm:not-sr-only" aria-live="polite">{isDirty || pending.length > 0 ? "You have unsaved changes" : editing ? "All changes saved" : "Not saved yet"}</p>
+            <p className="sr-only text-sm text-muted sm:not-sr-only" aria-live="polite">{isDirty || pending.length > 0 ? "You have unsaved changes" : editing ? "All changes saved. Gallery images save automatically." : "Not saved yet"}</p>
             <div className="flex gap-2">
               <Button variant="outline" disabled={save.isPending} onClick={() => { router.push("/admin/projects"); }}>Cancel</Button>
               <Button type="submit" disabled={save.isPending || (editing && !isDirty)}>
